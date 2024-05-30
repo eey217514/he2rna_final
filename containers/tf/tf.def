@@ -1,0 +1,9 @@
+BootStrap: docker 
+From: tensorflow/tensorflow:1.14.0-gpu-py3
+
+%post
+    rm /etc/apt/sources.list.d/cuda.list
+    rm /etc/apt/sources.list.d/nvidia-ml.list
+    apt-get -y update --fix-missing
+    apt-get install -y --no-install-recommends openslide-tools python-openslide
+    pip install Keras==2.2.4 colorcorrect==0.9 tqdm==4.32.2 Pillow==6.1.0 openslide-python==1.1.1 joblib==0.15.1

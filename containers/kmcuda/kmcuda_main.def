@@ -1,0 +1,38 @@
+BootStrap: docker
+From: nvcr.io/nvidia/cuda:8.0-devel-ubuntu16.04
+
+%post
+    rm /etc/apt/sources.list.d/cuda.list
+    rm /etc/apt/sources.list.d/nvidia-ml.list
+    apt-get -y update --fix-missing
+
+    apt install -y --no-install-recommends wget ca-certificates cmake
+    apt-get update && apt-get install -y git
+
+    wget https://github.com/mamba-org/micromamba-releases/releases/download/1.5.8-0/micromamba-linux-64
+    mv micromamba-linux-64 bin/micromamba
+    chmod 755 bin/micromamba
+    bin/micromamba shell init -s bash -p /opt/micromamba
+    chmod --recursive 755 /opt/micromamba
+
+    export MAMBA_ROOT_PREFIX=/opt/micromamba
+    eval "$(bin/micromamba shell hook --shell posix --root-prefix "/opt/micromamba")"
+    micromamba activate
+    
+    micromamba create -n he2rna -c conda-forge python=3.6 numpy=1.17 pandas=0.23 pip 
+    micromamba activate /opt/micromamba/envs/he2rna
+    micromamba install -c conda-forge cudatoolkit=10.1
+    
+    pip install torch==1.4.0+cu92 torchvision==0.5.0 tensorboardX==1.4 -f https://download.pytorch.org/whl/torch_stable.html
+    pip install scikit-learn==0.21.2 tqdm==4.32 h5py==2.9 joblib==0.15 
+
+
+%environment 
+
+    export MAMBA_ROOT_PREFIX=/opt/micromamba
+    eval "$(micromamba shell hook --shell posix --root-prefix "/opt/micromamba")"
+    micromamba activate /opt/micromamba/envs/he2rna
+
+    
+
+
